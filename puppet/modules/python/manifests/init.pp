@@ -11,7 +11,7 @@ class python {
 }
 class python::packages {
   $apt = ['python-dev', 'build-essential', 'python-pip']
-  $pip = ['virtualenv', 'flask']
+  $pip = ['virtualenv', 'flask', 'psycopg2']
 
   package { $apt:
   	require => Class['python'],
@@ -19,7 +19,7 @@ class python::packages {
 	}
 
 	package { $pip:
-		require		=> Class['python'],
+		require		=> Class['python', 'postgresql'],
 		ensure		=> installed,
 		provider	=> pip;
 	}

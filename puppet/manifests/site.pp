@@ -8,7 +8,14 @@ class { 'baseconfig':
   stage => 'pre'
 }
 
-include baseconfig, users, nginx, python, uwsgi
+include baseconfig, users, nginx, postgresql, python, uwsgi
+
+postgresql::create-role {'smashup-user':
+}
+
+postgresql::create-db {'smashup-randomizer':
+  owner => 'smashup-user'
+}
 
 uwsgi::vassal {'smashup-randomizer':
 }
