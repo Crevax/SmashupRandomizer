@@ -1,0 +1,7 @@
+[uwsgi]
+uid=www-data
+gid=www-data
+socket=/tmp/<%= @socket %>.sock
+chdir=/srv/www/<%= @directory %>/src
+module=app
+callable=app

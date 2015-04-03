@@ -1,0 +1,5 @@
+# Vagrant generated files
+.vagrant
+
+# Puppet Graphs
+/graphs
