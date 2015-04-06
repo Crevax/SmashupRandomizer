@@ -3,3 +3,6 @@
 
 # Puppet Graphs
 /graphs
+
+# OSX Files
+.DS_Store
