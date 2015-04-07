@@ -8,8 +8,7 @@ app.wsgi_app = DebuggedApplication( app.wsgi_app, True )
 
 @app.route("/")
 def index():
-  #g.db = psycopg2.connect("dbname=smashup-randomizer user=smashup-user", connection_factory=psycopg2.extras.RealDictConnection)
-  foo = "bar"
+  conn = psycopg2.connect("host=localhost dbname=smashup_randomizer user=smashup_user password=123four", connection_factory=psycopg2.extras.RealDictConnection)
   return render_template('index.html')
 
 if __name__ == "__main__":

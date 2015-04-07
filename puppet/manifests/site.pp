@@ -10,11 +10,12 @@ class { 'baseconfig':
 
 include baseconfig, users, nginx, postgresql, python, uwsgi
 
-postgresql::create-role {'smashup-user':
+# Note: PostgreSQL doesn't like hyphens
+postgresql::create-role {'smashup_user':
 }
 
-postgresql::create-db {'smashup-randomizer':
-  owner => 'smashup-user'
+postgresql::create-db {'smashup_randomizer':
+  owner => 'smashup_user'
 }
 
 uwsgi::vassal {'smashup-randomizer':
