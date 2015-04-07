@@ -8,7 +8,15 @@ class { 'baseconfig':
   stage => 'pre'
 }
 
-include baseconfig, users, nginx, python, uwsgi
+include baseconfig, users, nginx, postgresql, python, uwsgi
+
+# Note: PostgreSQL doesn't like hyphens
+postgresql::create-role {'smashup_user':
+}
+
+postgresql::create-db {'smashup_randomizer':
+  owner => 'smashup_user'
+}
 
 uwsgi::vassal {'smashup-randomizer':
 }
