@@ -4,6 +4,10 @@ server {
 
   server_name <%= @name %>.dev;
 
+  location /static {
+    alias /srv/www/<%= @name %>/src/static;
+  }
+
   location / {
     try_files $uri @app;
   }
