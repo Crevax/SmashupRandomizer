@@ -2,6 +2,13 @@
 * VirtualBox (https://www.virtualbox.org/)
 * Vagrant (https://www.vagrantup.com/)
 
+## Server Architecture
+* Ubuntu - Trusty Tahr 32 Bit
+* Python - 2.7.6 (Ubuntu Default)
+* Nginx - Latest version from Ubuntu's Source
+* Uwsgi - Latest version from Pip
+* PostgreSQL - Latest version from Ubuntu's Source
+
 ## Installing/Running
 1. Clone this repository
 2. Open the root directory in your favorite CLI
