@@ -24,6 +24,45 @@ def db_check():
   conn.close()
   return "It Works!"
 
+@app.route('/schema')
+def create_schema():
+  conn = psycopg2.connect(host=app.config['DB_HOST'], database=app.config['DB_NAME'], user=app.config['DB_USER'], password=app.config['DB_PASS'], connection_factory=psycopg2.extras.RealDictConnection)
+  cur = conn.cursor()
+  with app.open_resource('schema.sql', mode='r') as f:
+    cur.execute(f.read())
+  conn.commit()
+  conn.close()
+  return "Nothing broken yet!"
+
+@app.route('/seed')
+def seed_db():
+  conn = psycopg2.connect(host=app.config['DB_HOST'], database=app.config['DB_NAME'], user=app.config['DB_USER'], password=app.config['DB_PASS'], connection_factory=psycopg2.extras.RealDictConnection)
+  cur = conn.cursor()
+  with app.open_resource('seed.sql', mode='r') as f:
+    cur.execute(f.read())
+  conn.commit()
+  conn.close()
+  return "We're still good!"
+
+@app.route('/drop')
+def drop_schema():
+  conn = psycopg2.connect(host=app.config['DB_HOST'], database=app.config['DB_NAME'], user=app.config['DB_USER'], password=app.config['DB_PASS'], connection_factory=psycopg2.extras.RealDictConnection)
+  cur = conn.cursor()
+  with app.open_resource('drop_schema.sql', mode='r') as f:
+    cur.execute(f.read())
+  conn.commit()
+  conn.close()
+  return "No more DB Data!"
+
+@app.route('/sets')
+def sets():
+  conn = psycopg2.connect(host=app.config['DB_HOST'], database=app.config['DB_NAME'], user=app.config['DB_USER'], password=app.config['DB_PASS'], connection_factory=psycopg2.extras.RealDictConnection)
+  cur = conn.cursor()
+  cur.execute("SELECT * FROM deck_sets")
+  sets = cur.fetchall()
+  conn.close()
+  return str(sets)
+
 @app.route("/coffee")
 def coffee():
   abort(418)
