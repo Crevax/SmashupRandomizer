@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import abort, Flask, render_template
 from werkzeug.debug import DebuggedApplication
 import psycopg2, psycopg2.extras
 
@@ -17,7 +17,11 @@ def db_check():
   return "It Works!"
 
 @app.route("/coffee")
-def am_teapot():
+def coffee():
+  abort(418)
+
+@app.errorhandler(418)
+def am_teapot(error):
   return render_template("teapot.html"), 418
 
 if __name__ == "__main__":
