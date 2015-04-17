@@ -16,5 +16,9 @@ def db_check():
   conn.close()
   return "It Works!"
 
+@app.route("/coffee")
+def am_teapot():
+  return render_template("teapot.html"), 418
+
 if __name__ == "__main__":
   app.run()
