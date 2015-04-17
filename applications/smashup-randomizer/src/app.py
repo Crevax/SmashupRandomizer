@@ -8,9 +8,13 @@ app.wsgi_app = DebuggedApplication( app.wsgi_app, True )
 
 @app.route("/")
 def index():
+  return render_template('index.html')
+
+@app.route("/db_check")
+def db_check():
   conn = psycopg2.connect("host=localhost dbname=smashup_randomizer user=smashup_user password=123four", connection_factory=psycopg2.extras.RealDictConnection)
   conn.close()
-  return render_template('index.html', info=conn)
+  return "It Works!"
 
 if __name__ == "__main__":
   app.run()
