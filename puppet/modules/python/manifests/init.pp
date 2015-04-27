@@ -3,24 +3,24 @@
 # Installs python dev packages
 #
 class python {
-	include python::packages
+  include python::packages
 
-	package { 'python':
-		ensure => installed;
-	}
+  package { 'python':
+    ensure => installed;
+  }
 }
 class python::packages {
   $apt = ['python-dev', 'build-essential', 'python-pip']
   $pip = ['virtualenv', 'flask', 'psycopg2']
 
   package { $apt:
-  	require => Class['python'],
-  	ensure 	=> installed;
-	}
+    require => Class['python'],
+    ensure 	=> installed;
+  }
 
-	package { $pip:
-		require		=> Class['python', 'postgresql'],
-		ensure		=> installed,
-		provider	=> pip;
-	}
+  package { $pip:
+    require   => Class['python', 'postgresql'],
+    ensure    => installed,
+    provider  => pip;
+  }
 }
