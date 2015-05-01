@@ -1,6 +1,7 @@
 from flask import abort, Flask, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.script import Manager
+from flask.ext.migrate import Migrate, MigrateCommand
 from werkzeug.debug import DebuggedApplication
 
 # configuration - will be refactored and moved later
@@ -13,8 +14,10 @@ app.config.from_object(__name__)
 app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 class DeckSet(db.Model):
   id = db.Column(db.Integer, primary_key=True)
