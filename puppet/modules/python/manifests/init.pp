@@ -11,7 +11,7 @@ class python {
 }
 class python::packages {
   $apt = ['python-dev', 'build-essential', 'python-pip']
-  $pip = ['virtualenv', 'flask', 'psycopg2']
+  $pip = ['virtualenv', 'flask', 'psycopg2', 'sqlalchemy', 'flask-sqlalchemy']
 
   package { $apt:
     require => Class['python'],
