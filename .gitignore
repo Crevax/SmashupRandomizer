@@ -3,3 +3,7 @@
 
 # OSX Files
 .DS_Store
+
+# Python Generate Files
+*.pyc
+*.pyo
