@@ -2,6 +2,7 @@ from flask import abort, Flask, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
+from sqlalchemy.exc import IntegrityError, ProgrammingError
 from werkzeug.debug import DebuggedApplication
 
 # configuration - will be refactored and moved later
@@ -53,28 +54,12 @@ class Deck(db.Model):
 def index():
   return render_template('index.html')
 
-@app.route('/seed')
-def seed_db():
-  core = DeckSet('Core')
-  awe = DeckSet('Awesome Level 9000')
-  cthulhu = DeckSet('The Obligatory Cthulhu Set')
-  scifi = DeckSet('Science Fiction Double Feature')
-  geek = DeckSet('The Big Geeky Box')
-  monster = DeckSet('Monster Smash')
-  pretty = DeckSet('Pretty Pretty Smash Up')
-  db.session.add(core)
-  db.session.add(awe)
-  db.session.add(cthulhu)
-  db.session.add(scifi)
-  db.session.add(geek)
-  db.session.add(monster)
-  db.session.add(pretty)
-  db.session.commit()
-  return "We have data"
-
 @app.route('/sets')
 def sets():
-  sets = DeckSet.query.all()
+  try:
+    sets = DeckSet.query.all()
+  except ProgrammingError:
+    return "Missing database tables. Are you sure you ran migrations?", 500
   return ','.join(set.name for set in sets)
 
 @app.route("/coffee")
@@ -84,6 +69,29 @@ def coffee():
 @app.errorhandler(418)
 def am_teapot(error):
   return render_template("teapot.html"), 418
+
+@manager.command
+def seed_db():
+  "Adds initial data to the database"
+  try:
+    core = DeckSet('Core')
+    awe = DeckSet('Awesome Level 9000')
+    cthulhu = DeckSet('The Obligatory Cthulhu Set')
+    scifi = DeckSet('Science Fiction Double Feature')
+    geek = DeckSet('The Big Geeky Box')
+    monster = DeckSet('Monster Smash')
+    pretty = DeckSet('Pretty Pretty Smash Up')
+    db.session.add(core)
+    db.session.add(awe)
+    db.session.add(cthulhu)
+    db.session.add(scifi)
+    db.session.add(geek)
+    db.session.add(monster)
+    db.session.add(pretty)
+    db.session.commit()
+  except IntegrityError:
+    return "Seed data already exists"
+  return "We have data now"
 
 if __name__ == "__main__":
   manager.run()
