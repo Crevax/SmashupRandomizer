@@ -1,67 +1,91 @@
 from flask import abort, Flask, render_template
+from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug.debug import DebuggedApplication
-import psycopg2, psycopg2.extras
 
 # configuration - will be refactored and moved later
 DEBUG       = True
 SECRET_KEY  ='development key'
-DB_HOST     = 'localhost'
-DB_NAME     = 'smashup_randomizer'
-DB_USER     = 'smashup_user'
-DB_PASS     = '123four'
+SQLALCHEMY_DATABASE_URI = 'postgresql://smashup_user:123four@localhost/smashup_randomizer'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
 
+db = SQLAlchemy(app)
+
+class DeckSet(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(80), unique=True)
+
+  def __init__(self, name):
+    self.name = name
+
+  def __repr__(self):
+    return '<Set %r>' % self.name
+
+  def __unicode__(self):
+    return '%s' % self.name
+
+class Deck(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(50), unique=True)
+  set_id = db.Column(db.Integer, db.ForeignKey('deck_set.id'))
+  set = db.relationship('DeckSet',
+    backref=db.backref('decks', lazy='dynamic'))
+
+  def __init__(self, name, set):
+    self.name = name
+    self.set = set
+
+  def __repr__(self):
+    return '<Deck %r>' % self.name
+
+  def __unicode__(self):
+    return '%s' % self.name
+
 @app.route("/")
 def index():
   return render_template('index.html')
 
-@app.route("/db_check")
-def db_check():
-  conn = psycopg2.connect(host=app.config['DB_HOST'], database=app.config['DB_NAME'], user=app.config['DB_USER'], password=app.config['DB_PASS'], connection_factory=psycopg2.extras.RealDictConnection)
-  conn.close()
-  return "It Works!"
-
 @app.route('/schema')
 def create_schema():
-  conn = psycopg2.connect(host=app.config['DB_HOST'], database=app.config['DB_NAME'], user=app.config['DB_USER'], password=app.config['DB_PASS'], connection_factory=psycopg2.extras.RealDictConnection)
-  cur = conn.cursor()
-  with app.open_resource('schema.sql', mode='r') as f:
-    cur.execute(f.read())
-  conn.commit()
-  conn.close()
-  return "Nothing broken yet!"
+  try:
+    db.create_all()
+  except:
+    return str(sys.exc_info()[0])
+  return "We have tables!"
 
 @app.route('/seed')
 def seed_db():
-  conn = psycopg2.connect(host=app.config['DB_HOST'], database=app.config['DB_NAME'], user=app.config['DB_USER'], password=app.config['DB_PASS'], connection_factory=psycopg2.extras.RealDictConnection)
-  cur = conn.cursor()
-  with app.open_resource('seed.sql', mode='r') as f:
-    cur.execute(f.read())
-  conn.commit()
-  conn.close()
-  return "We're still good!"
+  core = DeckSet('Core')
+  awe = DeckSet('Awesome Level 9000')
+  cthulhu = DeckSet('The Obligatory Cthulhu Set')
+  scifi = DeckSet('Science Fiction Double Feature')
+  geek = DeckSet('The Big Geeky Box')
+  monster = DeckSet('Monster Smash')
+  pretty = DeckSet('Pretty Pretty Smash Up')
+  db.session.add(core)
+  db.session.add(awe)
+  db.session.add(cthulhu)
+  db.session.add(scifi)
+  db.session.add(geek)
+  db.session.add(monster)
+  db.session.add(pretty)
+  db.session.commit()
+  return "We have data"
 
 @app.route('/drop')
 def drop_schema():
-  conn = psycopg2.connect(host=app.config['DB_HOST'], database=app.config['DB_NAME'], user=app.config['DB_USER'], password=app.config['DB_PASS'], connection_factory=psycopg2.extras.RealDictConnection)
-  cur = conn.cursor()
-  with app.open_resource('drop_schema.sql', mode='r') as f:
-    cur.execute(f.read())
-  conn.commit()
-  conn.close()
-  return "No more DB Data!"
+  try:
+    db.drop_all()
+  except:
+    return str(sys.exc_info()[0])
+  return "We no longer have tables!"
 
 @app.route('/sets')
 def sets():
-  conn = psycopg2.connect(host=app.config['DB_HOST'], database=app.config['DB_NAME'], user=app.config['DB_USER'], password=app.config['DB_PASS'], connection_factory=psycopg2.extras.RealDictConnection)
-  cur = conn.cursor()
-  cur.execute("SELECT * FROM deck_sets")
-  sets = cur.fetchall()
-  conn.close()
-  return str(sets)
+  sets = DeckSet.query.all()
+  return ','.join(set.name for set in sets)
 
 @app.route("/coffee")
 def coffee():
