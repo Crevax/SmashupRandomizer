@@ -53,14 +53,6 @@ class Deck(db.Model):
 def index():
   return render_template('index.html')
 
-@app.route('/schema')
-def create_schema():
-  try:
-    db.create_all()
-  except:
-    return str(sys.exc_info()[0])
-  return "We have tables!"
-
 @app.route('/seed')
 def seed_db():
   core = DeckSet('Core')
@@ -79,14 +71,6 @@ def seed_db():
   db.session.add(pretty)
   db.session.commit()
   return "We have data"
-
-@app.route('/drop')
-def drop_schema():
-  try:
-    db.drop_all()
-  except:
-    return str(sys.exc_info()[0])
-  return "We no longer have tables!"
 
 @app.route('/sets')
 def sets():
