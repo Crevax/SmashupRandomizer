@@ -1,5 +1,6 @@
 from flask import abort, Flask, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.script import Manager
 from werkzeug.debug import DebuggedApplication
 
 # configuration - will be refactored and moved later
@@ -12,6 +13,8 @@ app.config.from_object(__name__)
 app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
 
 db = SQLAlchemy(app)
+
+manager = Manager(app)
 
 class DeckSet(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -96,4 +99,4 @@ def am_teapot(error):
   return render_template("teapot.html"), 418
 
 if __name__ == "__main__":
-  app.run()
+  manager.run()
