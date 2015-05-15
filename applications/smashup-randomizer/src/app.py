@@ -28,10 +28,10 @@ class DeckSet(db.Model):
     self.name = name
 
   def __repr__(self):
-    return '<Set %r>' % self.name
+    return '<Set {0}>'.format(self.name)
 
   def __unicode__(self):
-    return '%s' % self.name
+    return '{0}'.format(self.name)
 
 class Deck(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -45,10 +45,10 @@ class Deck(db.Model):
     self.set = set
 
   def __repr__(self):
-    return '<Deck %r>' % self.name
+    return '<Deck {0}>'.format(self.name)
 
   def __unicode__(self):
-    return '%s' % self.name
+    return '{0}'.format(self.name)
 
 @app.route("/")
 def index():
