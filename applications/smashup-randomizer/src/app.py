@@ -60,7 +60,7 @@ def sets():
     sets = DeckSet.query.all()
   except ProgrammingError:
     return "Missing database tables. Are you sure you ran migrations?", 500
-  return ','.join(set.name for set in sets)
+  return render_template('sets.html', sets=sets)
 
 @app.route("/coffee")
 def coffee():

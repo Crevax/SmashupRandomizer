@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+  <title>Smash Up Randomizer | Sets</title>
+  <link rel="stylesheet" type="text/css" href="/static/site.css">
+</head>
+<body>
+  {% if sets|length > 0 %}
+    <ul>
+    {% for set in sets %}
+      <li>{{ set }}</li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>No Deck sets found</p>
+  {% endif %}
+</body>
+</html>
