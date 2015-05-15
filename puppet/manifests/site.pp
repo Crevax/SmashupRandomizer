@@ -18,8 +18,9 @@ postgresql::create-db {'smashup_randomizer':
   owner => 'smashup_user'
 }
 
-uwsgi::vassal {'smashup-randomizer':
+uwsgi::vassal {'smashup-randomizer-api':
 }
 
 nginx::load-server {'smashup-randomizer':
+  socket => 'smashup-randomizer-api'
 }
